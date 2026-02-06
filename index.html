@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="PrimeXStream - Watch your favorite anime for free. Stream the latest episodes in HD quality with subtitles.">
+    <meta property="og:title" content="PrimeXStream - Free Anime Streaming">
+    <meta property="og:description" content="Watch anime online for free in HD quality">
+    <meta property="og:type" content="website">
+    <title>PrimeXStream - Free Anime Streaming</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showHome()">
+                <span class="logo-icon">▶</span>
+                <span class="logo-text">PrimeX<span class="accent">Stream</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="#" onclick="showHome()" class="nav-link active" data-page="home">Home</a>
+                <a href="#" onclick="showCategory('top-airing')" class="nav-link" data-page="top-airing">Top Airing</a>
+                <a href="#" onclick="showCategory('most-popular')" class="nav-link" data-page="most-popular">Popular</a>
+                <a href="#" onclick="showCategory('most-favorite')" class="nav-link"
+                    data-page="most-favorite">Favorites</a>
+                <a href="#" onclick="showAdvancedSearch()" class="nav-link" data-page="browse">Browse</a>
+            </div>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search anime..." autocomplete="off">
+                    <button class="search-btn" onclick="performSearch()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#" onclick="showHome(); toggleMobileMenu();">Home</a>
+        <a href="#" onclick="showCategory('top-airing'); toggleMobileMenu();">Top Airing</a>
+        <a href="#" onclick="showCategory('most-popular'); toggleMobileMenu();">Popular</a>
+        <a href="#" onclick="showCategory('most-favorite'); toggleMobileMenu();">Favorites</a>
+        <a href="#" onclick="showAdvancedSearch(); toggleMobileMenu();">Browse</a>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Page -->
+        <section id="homePage" class="page active">
+            <!-- Hero Section -->
+            <div class="hero" id="heroSection">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <span class="hero-badge">Featured</span>
+                    <h1 class="hero-title" id="heroTitle">Loading...</h1>
+                    <p class="hero-description" id="heroDescription"></p>
+                    <div class="hero-meta" id="heroMeta"></div>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" id="heroWatchBtn">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Watch Now
+                        </button>
+                        <button class="btn btn-secondary" id="heroInfoBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            More Info
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anime Sections -->
+            <div class="sections-container">
+                <section class="anime-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🔥 Top Airing</h2>
+                        <a href="#" onclick="showCategory('top-airing')" class="see-all">See All →</a>
+                    </div>
+                    <div class="anime-grid" id="topAiringGrid">
+                        <div class="loading-skeleton"></div>
+                    </div>
+                </section>
+
+                <section class="anime-section">
+                    <div class="section-header">
+                        <h2 class="section-title">⭐ Most Popular</h2>
+                        <a href="#" onclick="showCategory('most-popular')" class="see-all">See All →</a>
+                    </div>
+                    <div class="anime-grid" id="popularGrid">
+                        <div class="loading-skeleton"></div>
+                    </div>
+                </section>
+
+                <section class="anime-section">
+                    <div class="section-header">
+                        <h2 class="section-title">❤️ Most Favorite</h2>
+                        <a href="#" onclick="showCategory('most-favorite')" class="see-all">See All →</a>
+                    </div>
+                    <div class="anime-grid" id="favoriteGrid">
+                        <div class="loading-skeleton"></div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- Category Page -->
+        <section id="categoryPage" class="page">
+            <div class="category-header">
+                <h1 class="category-title" id="categoryTitle">Category</h1>
+            </div>
+            <div class="anime-grid large" id="categoryGrid"></div>
+            <div class="pagination" id="categoryPagination"></div>
+        </section>
+
+        <!-- Search Results Page -->
+        <section id="searchPage" class="page">
+            <div class="category-header">
+                <h1 class="category-title">Search Results for "<span id="searchQueryText"></span>"</h1>
+            </div>
+            <div class="anime-grid large" id="searchGrid"></div>
+            <div class="pagination" id="searchPagination"></div>
+        </section>
+
+        <!-- Advanced Search / Browse Page -->
+        <section id="browsePage" class="page">
+            <div class="browse-header">
+                <h1 class="category-title">Browse Anime</h1>
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label>Type</label>
+                        <select id="filterType">
+                            <option value="">All</option>
+                            <option value="movie">Movie</option>
+                            <option value="tv">TV</option>
+                            <option value="ova">OVA</option>
+                            <option value="ona">ONA</option>
+                            <option value="special">Special</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="filterStatus">
+                            <option value="">All</option>
+                            <option value="currently-airing">Currently Airing</option>
+                            <option value="finished-airing">Finished Airing</option>
+                            <option value="not-yet-aired">Not Yet Aired</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Season</label>
+                        <select id="filterSeason">
+                            <option value="">All</option>
+                            <option value="winter">Winter</option>
+                            <option value="spring">Spring</option>
+                            <option value="summer">Summer</option>
+                            <option value="fall">Fall</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Genres</label>
+                        <div class="genre-selector" id="genreSelector">
+                            <button class="genre-btn" data-genre="action">Action</button>
+                            <button class="genre-btn" data-genre="adventure">Adventure</button>
+                            <button class="genre-btn" data-genre="comedy">Comedy</button>
+                            <button class="genre-btn" data-genre="drama">Drama</button>
+                            <button class="genre-btn" data-genre="fantasy">Fantasy</button>
+                            <button class="genre-btn" data-genre="horror">Horror</button>
+                            <button class="genre-btn" data-genre="mecha">Mecha</button>
+                            <button class="genre-btn" data-genre="mystery">Mystery</button>
+                            <button class="genre-btn" data-genre="psychological">Psychological</button>
+                            <button class="genre-btn" data-genre="romance">Romance</button>
+                            <button class="genre-btn" data-genre="sci-fi">Sci-Fi</button>
+                            <button class="genre-btn" data-genre="slice-of-life">Slice of Life</button>
+                            <button class="genre-btn" data-genre="sports">Sports</button>
+                            <button class="genre-btn" data-genre="supernatural">Supernatural</button>
+                            <button class="genre-btn" data-genre="thriller">Thriller</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary filter-apply" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+            <div class="anime-grid large" id="browseGrid"></div>
+            <div class="pagination" id="browsePagination"></div>
+        </section>
+
+        <!-- Anime Detail Page -->
+        <section id="detailPage" class="page">
+            <div class="detail-container">
+                <div class="detail-backdrop" id="detailBackdrop"></div>
+                <div class="detail-content">
+                    <div class="detail-poster">
+                        <img id="detailPoster" src="" alt="Anime Poster">
+                    </div>
+                    <div class="detail-info">
+                        <h1 class="detail-title" id="detailTitle"></h1>
+                        <p class="detail-alt-title" id="detailAltTitle"></p>
+                        <div class="detail-meta" id="detailMeta"></div>
+                        <div class="detail-genres" id="detailGenres"></div>
+                        <p class="detail-description" id="detailDescription"></p>
+                        <button class="btn btn-primary btn-large" id="detailWatchBtn">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Start Watching
+                        </button>
+                    </div>
+                </div>
+                <div class="episodes-section">
+                    <h2 class="section-title">Episodes</h2>
+                    <div class="episodes-grid" id="episodesGrid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Player Page -->
+        <section id="playerPage" class="page">
+            <div class="player-container">
+                <div class="video-wrapper">
+                    <video id="videoPlayer" controls></video>
+                    <div class="video-loading" id="videoLoading">
+                        <div class="spinner"></div>
+                        <p>Loading video...</p>
+                    </div>
+                </div>
+                <div class="player-info">
+                    <div class="player-header">
+                        <div class="player-title-section">
+                            <h1 class="player-anime-title" id="playerAnimeTitle"></h1>
+                            <h2 class="player-episode-title" id="playerEpisodeTitle"></h2>
+                        </div>
+                        <div class="player-controls">
+                            <button class="btn btn-secondary" id="prevEpisodeBtn" onclick="playPrevEpisode()">←
+                                Previous</button>
+                            <button class="btn btn-secondary" id="nextEpisodeBtn" onclick="playNextEpisode()">Next
+                                →</button>
+                        </div>
+                    </div>
+                    <div class="server-selector">
+                        <span>Server:</span>
+                        <div class="server-buttons" id="serverButtons"></div>
+                    </div>
+                    <div class="quality-selector">
+                        <span>Quality:</span>
+                        <div class="quality-buttons" id="qualityButtons"></div>
+                    </div>
+                </div>
+                <div class="episode-list-container">
+                    <h3>Episodes</h3>
+                    <div class="episode-list" id="playerEpisodeList"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span class="logo-icon">▶</span>
+                <span class="logo-text">PrimeX<span class="accent">Stream</span></span>
+            </div>
+            <p class="footer-text">Watch anime online for free. Powered by Aniwatch API.</p>
+            <div class="footer-links">
+                <a href="https://docs.consumet.org" target="_blank">API Docs</a>
+                <a href="#" onclick="showHome()">Home</a>
+                <a href="#" onclick="showCategory('top-airing')">Top Airing</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
